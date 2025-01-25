@@ -57,10 +57,26 @@ public class MemorySpace {
 	 *        the length (in words) of the memory block that has to be allocated
 	 * @return the base address of the allocated block, or -1 if unable to allocate
 	 */
-	public int malloc(int length) {		
-		//// Replace the following statement with your code
-		return -1;
-	}
+	public int malloc(int length) {			
+		Node cur = freeList.getFirst();
+		while(cur != null && cur.block.length < length) {
+			cur = cur.next;
+		}
+		if(cur == null){
+			return -1;
+		}
+		MemoryBlock newBlockAlloc = new MemoryBlock(cur.block.baseAddress, length);
+		if(cur.block.length == length) {
+			freeList.remove(cur);
+		}
+		else {
+			cur.block.baseAddress += length;
+			cur.block.length -= length;
+		}
+		allocatedList.addLast(newBlockAlloc);
+		return newBlockAlloc.baseAddress;
+		}
+	
 
 	/**
 	 * Frees the memory block whose base address equals the given address.
@@ -71,7 +87,20 @@ public class MemorySpace {
 	 *            the starting address of the block to freeList
 	 */
 	public void free(int address) {
-		//// Write your code here
+		Node cur = allocatedList.getFirst();
+		if(allocatedList.getSize() == 0){
+				throw new IllegalArgumentException(
+						"index must be between 0 and size");
+		}
+		else {
+			while (cur.block.baseAddress != address && cur != allocatedList.getLast()) {
+				cur = cur.next;
+			}
+			if (cur.block.baseAddress == address) {
+			allocatedList.remove(cur.block);
+			freeList.addLast(cur.block);
+			}
+		}
 	}
 	
 	/**
@@ -88,7 +117,21 @@ public class MemorySpace {
 	 * In this implementation Malloc does not call defrag.
 	 */
 	public void defrag() {
-		/// TODO: Implement defrag test
-		//// Write your code here
+		ListIterator freeIterator1 = freeList.iterator();
+		while (freeIterator1.hasNext()) {
+			MemoryBlock curBlock = freeIterator1.next();
+			ListIterator freeIterator2 = freeList.iterator();
+			while (freeIterator2.hasNext()) {
+				MemoryBlock nextBlock = freeIterator2.next();
+				if (curBlock != nextBlock) {
+					if (curBlock.baseAddress + curBlock.length == nextBlock.baseAddress) {
+						curBlock.length += nextBlock.length;
+						freeList.remove(nextBlock);
+						freeIterator2 = freeList.iterator();
+					}
+				}
+			}
+		}
 	}
 }
+
