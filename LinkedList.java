@@ -260,15 +260,12 @@ public class LinkedList {
 	 * A textual representation of this list, for debugging.
 	 */
 	public String toString() {
-		if (size == 0) {
-			return "()";
-		}
-		String str = "(";
+		String s = "";
 		Node current = first;
-		while (current != null) { 
-			str += current.block + " ";
-			current = current.next;
+		while (current != null) {
+		s = s + current.block + " ";
+		current = current.next;
 		}
-		return str.substring(0,str.length() -1) + ")";
-	}
+		return s;
+		}
 }
