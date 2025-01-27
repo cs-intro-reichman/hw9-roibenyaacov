@@ -63,17 +63,17 @@ public class MemorySpace {
 		}
 		ListIterator iterator = freeList.iterator();
 		while (iterator.hasNext()) {
-			MemoryBlock curFreeBlock = iterator.next();
-			if (curFreeBlock.length >= length) {
-				MemoryBlock newAllocBlock = new MemoryBlock(curFreeBlock.baseAddress, length);
-				allocatedList.addLast(newAllocBlock);
-				if (curFreeBlock.length > length) {
-					curFreeBlock.baseAddress += length;
-					curFreeBlock.length -= length;
+			MemoryBlock currentFreeBlock = iterator.next();
+			if (currentFreeBlock.length >= length) {
+				MemoryBlock newAllocatedBlock = new MemoryBlock(currentFreeBlock.baseAddress, length);
+				allocatedList.addLast(newAllocatedBlock);
+				if (currentFreeBlock.length > length) {
+					currentFreeBlock.baseAddress += length;
+					currentFreeBlock.length -= length;
 				} else { 
-					freeList.remove(curFreeBlock);
+					freeList.remove(currentFreeBlock);
 				}
-				return newAllocBlock.baseAddress;
+				return newAllocatedBlock.baseAddress;
 			}
 		}
 		return -1;
@@ -94,9 +94,9 @@ public class MemorySpace {
 		ListIterator iterator = allocatedList.iterator();
 		MemoryBlock blockToFree = null;
 		while (iterator.hasNext()) {
-			MemoryBlock curBlock = iterator.next();
-			if (curBlock.baseAddress == address) {
-				blockToFree = curBlock;
+			MemoryBlock currentBlock = iterator.next();
+			if (currentBlock.baseAddress == address) {
+				blockToFree = currentBlock;
 				break;
 			}
 		}
